@@ -45,7 +45,9 @@ module Polycon
         ]
 
         def call(*)
-          warn "TODO: Implementar listado de profesionales.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          professionals = Model::Professional.list
+          warn professionals.map {|p| p.name}
+          #warn "TODO: Implementar listado de profesionales.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
       end
 
@@ -61,9 +63,9 @@ module Polycon
 
         def call(old_name:, new_name:, **)
           begin
-            Model::Professional.rename(old_name,new_name)
-            warn "Nombre modificado con éxito"
-          rescue => exception
+            professional = Model::Professional.rename(old_name,new_name)
+            warn "Nombre modificado con éxito, #{old_name} ahora se llama #{professional.name}"
+          rescue StandardError => exception
             warn exception.message
           end
           #warn "TODO: Implementar renombrado de profesionales con nombre '#{old_name}' para que pase a llamarse '#{new_name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
