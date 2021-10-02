@@ -12,8 +12,14 @@ module Polycon
         ]
 
         def call(name:, **)
-          warn "TODO: Implementar creación de un o una profesional con nombre '#{name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          begin
+            professional = Model::Professional.create(name)
+            warn "Profesional #{professional.name} creado con éxito"
+          rescue Model::Exceptions::CreationError => exception
+            warn exception.message
+          end
         end
+
       end
 
       class Delete < Dry::CLI::Command
@@ -27,8 +33,14 @@ module Polycon
         ]
 
         def call(name: nil)
-          warn "TODO: Implementar borrado de la o el profesional con nombre '#{name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          begin
+            Model::Professional.delete(name)
+            warn "Profesional #{name} eliminado"
+          rescue Model::Exceptions::ProfessionalNotFound, Model::Exceptions::FutureAppointments => exception
+            warn exception.message
+          end
         end
+
       end
 
       class List < Dry::CLI::Command
@@ -39,8 +51,14 @@ module Polycon
         ]
 
         def call(*)
-          warn "TODO: Implementar listado de profesionales.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          begin
+            professionals = Model::Professional.list
+            warn professionals.map {|p| p.name}
+          rescue Model::Exceptions::NoProfessionals => exception
+            warn exception.message
+          end
         end
+
       end
 
       class Rename < Dry::CLI::Command
@@ -54,8 +72,14 @@ module Polycon
         ]
 
         def call(old_name:, new_name:, **)
-          warn "TODO: Implementar renombrado de profesionales con nombre '#{old_name}' para que pase a llamarse '#{new_name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          begin
+            professional = Model::Professional.rename(old_name,new_name)
+            warn "Nombre modificado con éxito, #{old_name} ahora se llama #{professional.name}"
+          rescue Model::Exceptions::RenameError, Model::Exceptions::ProfessionalNotFound => exception
+            warn exception.message
+          end
         end
+
       end
     end
   end
