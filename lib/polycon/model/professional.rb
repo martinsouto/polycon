@@ -11,7 +11,7 @@ module Polycon
 
             def self.create(name,appointments=[])
                 name = self.format_name(name)
-                raise StandardError, "Ya existe un profesional con este nombre" if self.exist?(name)
+                raise Exceptions::CreationError, "Ya existe un profesional con este nombre" if self.exist?(name)
                 FileUtils.mkdir("#{PATH}#{name.tr(" ","_")}")
                 self.new(name,appointments)
             end
@@ -34,8 +34,7 @@ module Polycon
             def self.from_file(name)
                 #returns the Professional object that has the name given(with his appointments)
                 name = self.format_name(name)
-                raise StandardError, "El profesional específicado no existe" if !self.exist?(name)
-                #traigo un arreglo de sus appointments
+                raise Exceptions::ProfessionalNotFound, "El profesional específicado no existe" if !self.exist?(name)
                 appointments = Appointment.list(name)
                 professional = self.new(name.tr("_"," "),appointments)
             end
@@ -48,9 +47,9 @@ module Polycon
             def self.rename(old_name,new_name)
                 old_name = self.format_name(old_name)
                 new_name = self.format_name(new_name)
-                raise StandardError, "Los nombres ingresados no deben ser iguales" if old_name==new_name
-                raise StandardError, "El profesional ingresado no existe" if !self.exist?(old_name)
-                raise StandardError, "El nuevo nombre ya le pertenece a un profesional" if self.exist?(new_name)
+                raise Exceptions::RenameError, "Los nombres ingresados no deben ser iguales" if old_name==new_name
+                raise Exceptions::RenameError, "El profesional ingresado no existe" if !self.exist?(old_name)
+                raise Exceptions::RenameError, "El nuevo nombre ya le pertenece a un profesional" if self.exist?(new_name)
                 prof = self.from_file(old_name)
                 prof.name=(new_name)
                 FileUtils.mv("#{PATH}#{old_name.tr(" ","_")}","#{PATH}#{new_name.tr(" ","_")}")
@@ -59,7 +58,7 @@ module Polycon
 
             def self.delete(name)
                 profesional = self.from_file(name)
-                raise StandardError, "El profesional no puede ser eliminado ya que tiene turnos futuros" if profesional.has_future_appointments?
+                raise Exceptions::FutureAppointments , "El profesional no puede ser eliminado ya que tiene turnos futuros" if profesional.has_future_appointments?
                 FileUtils.rm_rf("#{PATH}#{profesional.name.tr(" ","_")}")
             end
 

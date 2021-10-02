@@ -142,8 +142,13 @@ module Polycon
         ]
 
         def call(date:, professional:, **options)
-          Model::Appointment.edit(professional,date,options)
-          warn "Turno editado con éxito"
+          begin
+            Model::Appointment.edit(professional,date,options)
+            warn "Turno editado con éxito"
+          rescue => exception
+            warn exception.message
+          end
+          
           #warn "TODO: Implementar modificación de un turno de la o el profesional '#{professional}' con fecha '#{date}', para cambiarle la siguiente información: #{options}.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
       end
