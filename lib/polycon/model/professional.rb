@@ -27,7 +27,7 @@ module Polycon
             def self.list
                 entries = Dir.entries(PATH)
                 prof_array = entries.select {|each| each != "." && each != ".."}
-                raise StandarError, "No hay profesionales cargados" if prof_array.empty?
+                raise Exceptions::NoProfessionals, "No hay profesionales cargados" if prof_array.empty?
                 prof_array.map  {|each| self.from_file(each.tr("_"," "))}
             end
 
@@ -47,10 +47,9 @@ module Polycon
             def self.rename(old_name,new_name)
                 old_name = self.format_name(old_name)
                 new_name = self.format_name(new_name)
-                raise Exceptions::RenameError, "Los nombres ingresados no deben ser iguales" if old_name==new_name
-                raise Exceptions::RenameError, "El profesional ingresado no existe" if !self.exist?(old_name)
-                raise Exceptions::RenameError, "El nuevo nombre ya le pertenece a un profesional" if self.exist?(new_name)
                 prof = self.from_file(old_name)
+                raise Exceptions::RenameError, "Los nombres ingresados no deben ser iguales" if old_name==new_name
+                raise Exceptions::RenameError, "El nuevo nombre ya le pertenece a un profesional" if self.exist?(new_name)
                 prof.name=(new_name)
                 FileUtils.mv("#{PATH}#{old_name.tr(" ","_")}","#{PATH}#{new_name.tr(" ","_")}")
                 prof
@@ -72,6 +71,9 @@ module Polycon
 
             def is_available?(date)
                 #verifica que no tiene ningun turno entre +-10mis de la date pasada
+                top_limit_date = date + Rational(10,(60*24))
+                bottom_limit_date = date - Rational(10,(60*24))
+                !@appointments.any? {|a| a.date < top_limit_date && a.date > bottom_limit_date}
             end
 
             def add_appointment(app)

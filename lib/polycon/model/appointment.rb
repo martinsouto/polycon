@@ -16,12 +16,13 @@ module Polycon
                 "#{@date.strftime("%d/%m/%Y %H:%M")} #{@name} #{@surname} #{@phone} #{@notes}"
             end
 
-            def self.create(date, prof, name, surname, phone, notes)
-                profesional = Profesional.from_file(prof)
+            def self.create(date, prof, name, surname, phone, notes=nil)
+                profesional = Professional.from_file(prof)
                 date_obj = DateTime.strptime(date, "%Y-%m-%d %H:%M")
-                raise Exceptions::CreationError, "El profesional no puede agregar el turno ya que está ocupado en esa fecha" if !profesional.is_available?(date_obj)
-                #self.save(date, prof, name, surname, phone, notes)
                 appointment = self.new(date_obj, name, surname, phone, notes)
+                raise Exceptions::PastAppointment, "No se puede crear el turno ya que la fecha es pasada" if !appointment.is_future?
+                raise Exceptions::CreationError, "El profesional no puede agregar el turno ya que está ocupado en esa fecha y hora" if !profesional.is_available?(date_obj)
+                appointment.save(self.route(prof, date))
                 profesional.add_appointment(appointment)
                 appointment
             end
@@ -29,7 +30,8 @@ module Polycon
             def self.from_file(prof,date)
                 raise Exceptions::ProfessionalNotFound, "El profesional especificado no existe" if !Professional.exist?(prof)
                 begin
-                    date_obj = DateTime.strptime(self.format_date(date), "%Y-%m-%d %H:%M")
+                    #date_obj = DateTime.strptime(self.format_date(date), "%Y-%m-%d %H:%M")
+                    date_obj = DateTime.strptime(date, "%Y-%m-%d_%H-%M")
                 rescue
                     date_obj = DateTime.strptime(date, "%Y-%m-%d %H:%M")
                 end
@@ -38,11 +40,6 @@ module Polycon
                 file_data = File.readlines(ruta).map {|l| l.chomp}
                 file_data.unshift(date_obj)
                 self.new(*file_data)
-            end
-
-            def self.format_date(date)
-                arr = date.split('_')
-                "#{arr[0]} #{arr[1].tr("-",":")}"
             end
 
             def self.exist?(prof,date)
@@ -82,6 +79,15 @@ module Polycon
                     appointment.send(:"#{key}=",value)
                 end
                 appointment.save(self.route(prof,date))
+            end
+
+            def self.reschedule(old_date,new_date,prof)
+                professional = Professional.from_file(prof)
+                appointment = self.from_file(prof,old_date)
+                new_date_obj = DateTime.strptime(new_date, "%Y-%m-%d %H:%M")
+                raise Exceptions::PastAppointment, "No se puede reprogramar el turno para una fecha anterior a la actual" if new_date_obj<DateTime.now
+                raise Exceptions::ReschedulingError, "No se puede reprogramar el turno ya que es profesional no está disponible en la fecha indicada" if !professional.is_available?(new_date_obj)
+                FileUtils.mv(self.route(prof,old_date),self.route(prof,new_date))
             end
 
             def is_future?

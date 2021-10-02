@@ -15,11 +15,11 @@ module Polycon
           begin
             professional = Model::Professional.create(name)
             warn "Profesional #{professional.name} creado con éxito"
-          rescue StandardError => exception
+          rescue Model::Exceptions::CreationError => exception
             warn exception.message
           end
-          #warn "TODO: Implementar creación de un o una profesional con nombre '#{name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
+
       end
 
       class Delete < Dry::CLI::Command
@@ -36,11 +36,11 @@ module Polycon
           begin
             Model::Professional.delete(name)
             warn "Profesional #{name} eliminado"
-          rescue StandardError => exception #ProfessionalNotFound #DeleteInvalid
+          rescue Model::Exceptions::ProfessionalNotFound, Model::Exceptions::FutureAppointments => exception
             warn exception.message
           end
-          #warn "TODO: Implementar borrado de la o el profesional con nombre '#{name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
+
       end
 
       class List < Dry::CLI::Command
@@ -54,12 +54,11 @@ module Polycon
           begin
             professionals = Model::Professional.list
             warn professionals.map {|p| p.name}
-          rescue StandardError => exception
+          rescue Model::Exceptions::NoProfessionals => exception
             warn exception.message
           end
-          
-          #warn "TODO: Implementar listado de profesionales.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
+
       end
 
       class Rename < Dry::CLI::Command
@@ -76,11 +75,11 @@ module Polycon
           begin
             professional = Model::Professional.rename(old_name,new_name)
             warn "Nombre modificado con éxito, #{old_name} ahora se llama #{professional.name}"
-          rescue StandardError => exception
+          rescue Model::Exceptions::RenameError, Model::Exceptions::ProfessionalNotFound => exception
             warn exception.message
           end
-          #warn "TODO: Implementar renombrado de profesionales con nombre '#{old_name}' para que pase a llamarse '#{new_name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
+
       end
     end
   end

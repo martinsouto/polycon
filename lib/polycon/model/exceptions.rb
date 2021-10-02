@@ -10,6 +10,9 @@ module Polycon
             class NoAppointments < StandardError
             end
 
+            class NoProfessionals < StandardError
+            end
+
             class PastAppointment < StandardError
             end
 
@@ -23,6 +26,9 @@ module Polycon
             end
 
             class CreationError < StandardError
+            end
+
+            class ReschedulingError < StandardError
             end
         end
     end

@@ -17,8 +17,16 @@ module Polycon
         ]
 
         def call(date:, professional:, name:, surname:, phone:, notes: nil)
-          warn "TODO: Implementar creación de un turno con fecha '#{date}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          begin
+            appointment = Model::Appointment.create(date,professional, name, surname, phone, notes)
+            warn "El turno con el/la profesional #{professional} en la fecha #{date} fue creado con éxito"
+          rescue Date::Error
+            warn "La fecha indicada es inválida"
+          rescue Model::Exceptions::ProfessionalNotFound, Model::Exceptions::CreationError, Model::Exceptions::PastAppointment=> exception
+            warn exception.message
+          end
         end
+
       end
 
       class Show < Dry::CLI::Command
@@ -35,11 +43,13 @@ module Polycon
           begin
             appointment = Model::Appointment.from_file(professional,date)
             warn appointment.to_s
-          rescue StandardError=> exception #ProfessionalNotFound #AppointmentNotFound #Date::Error 
+          rescue Date::Error
+            warn "La fecha indicada es inválida"
+          rescue Model::Exceptions::ProfessionalNotFound, Model::Exceptions::AppointmentNotFound=> exception
             warn exception.message
           end
-          #warn "TODO: Implementar detalles de un turno con fecha '#{date}' y profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
+
       end
 
       class Cancel < Dry::CLI::Command
@@ -56,11 +66,13 @@ module Polycon
           begin
             Model::Appointment.cancel(professional,date)
             warn "Turno cancelado con éxito"
-          rescue StandardError => exception #ProfessionalNotFound #AppointmentNotFound #Date::Error #PastAppointment
+          rescue Date::Error
+            warn "La fecha indicada es inválida"
+          rescue Model::Exceptions::ProfessionalNotFound, Model::Exceptions::AppointmentNotFound, Model::Exceptions::PastAppointment => exception
             warn exception.message
           end
-          #warn "TODO: Implementar borrado de un turno con fecha '#{date}' y profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
+
       end
 
       class CancelAll < Dry::CLI::Command
@@ -76,12 +88,11 @@ module Polycon
           begin
             Model::Appointment.cancel_all(professional)
             warn "Todos los turnos a futuro de #{professional} fueron cancelados"
-          rescue => exception #ProffesionalNotFound #NoAppointments 
+          rescue Model::Exceptions::ProfessionalNotFound, Model::Exceptions::NoAppointments=> exception 
             warn exception.message
           end
-          
-          #warn "TODO: Implementar borrado de todos los turnos de la o el profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
+
       end
 
       class List < Dry::CLI::Command
@@ -100,13 +111,12 @@ module Polycon
             appointments = Model::Appointment.list(professional, date)
             warn appointments.map {|each| each.to_s}
           rescue Date::Error 
-            warn "La fecha ingresada es inválida"
-          rescue StandardError => exception #ProfessionalNotFound #Date::Error
+            warn "La fecha indicada es inválida"
+          rescue Model::Exceptions::ProfessionalNotFound => exception
             warn exception.message
           end
-          
-          #warn "TODO: Implementar listado de turnos de la o el profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
+
       end
 
       class Reschedule < Dry::CLI::Command
@@ -121,7 +131,14 @@ module Polycon
         ]
 
         def call(old_date:, new_date:, professional:)
-          warn "TODO: Implementar cambio de fecha de turno con fecha '#{old_date}' para que pase a ser '#{new_date}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          begin
+            Model::Appointment.reschedule(old_date,new_date,professional)
+            warn "Turno reprogramado con éxito"
+          rescue Date::Error 
+            warn "La fecha indicada es inválida"
+          rescue Model::Exceptions::ProfessionalNotFound, Model::Exceptions::AppointmentNotFound, Model::Exceptions::ReschedulingError, Model::Exceptions::PastAppointment => exception
+            warn exception.message
+          end
         end
       end
 
@@ -145,12 +162,13 @@ module Polycon
           begin
             Model::Appointment.edit(professional,date,options)
             warn "Turno editado con éxito"
-          rescue => exception
+          rescue Date::Error 
+            warn "La fecha indicada es inválida"
+          rescue Model::Exceptions::ProfessionalNotFound, Model::Exceptions::AppointmentNotFound, Model::Exceptions::PastAppointment => exception
             warn exception.message
           end
-          
-          #warn "TODO: Implementar modificación de un turno de la o el profesional '#{professional}' con fecha '#{date}', para cambiarle la siguiente información: #{options}.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
+
       end
     end
   end
