@@ -33,7 +33,13 @@ module Polycon
         ]
 
         def call(name: nil)
-          warn "TODO: Implementar borrado de la o el profesional con nombre '#{name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          begin
+            Model::Professional.delete(name)
+            warn "Profesional #{name} eliminado"
+          rescue StandardError => exception #ProfessionalNotFound #DeleteInvalid
+            warn exception.message
+          end
+          #warn "TODO: Implementar borrado de la o el profesional con nombre '#{name}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
       end
 
@@ -45,8 +51,13 @@ module Polycon
         ]
 
         def call(*)
-          professionals = Model::Professional.list
-          warn professionals.map {|p| p.name}
+          begin
+            professionals = Model::Professional.list
+            warn professionals.map {|p| p.name}
+          rescue StandardError => exception
+            warn exception.message
+          end
+          
           #warn "TODO: Implementar listado de profesionales.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
       end

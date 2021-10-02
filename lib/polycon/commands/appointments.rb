@@ -1,3 +1,4 @@
+require 'date'
 module Polycon
   module Commands
     module Appointments
@@ -31,7 +32,13 @@ module Polycon
         ]
 
         def call(date:, professional:)
-          warn "TODO: Implementar detalles de un turno con fecha '#{date}' y profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          begin
+            appointment = Model::Appointment.from_file(professional,date)
+            warn appointment.to_s
+          rescue StandardError=> exception #ProfessionalNotFound #AppointmentNotFound #Date::Error 
+            warn exception.message
+          end
+          #warn "TODO: Implementar detalles de un turno con fecha '#{date}' y profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
       end
 
@@ -46,7 +53,13 @@ module Polycon
         ]
 
         def call(date:, professional:)
-          warn "TODO: Implementar borrado de un turno con fecha '#{date}' y profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          begin
+            Model::Appointment.cancel(professional,date)
+            warn "Turno cancelado con éxito"
+          rescue StandardError => exception #ProfessionalNotFound #AppointmentNotFound #Date::Error #PastAppointment
+            warn exception.message
+          end
+          #warn "TODO: Implementar borrado de un turno con fecha '#{date}' y profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
       end
 
@@ -60,7 +73,14 @@ module Polycon
         ]
 
         def call(professional:)
-          warn "TODO: Implementar borrado de todos los turnos de la o el profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          begin
+            Model::Appointment.cancel_all(professional)
+            warn "Todos los turnos a futuro de #{professional} fueron cancelados"
+          rescue => exception #ProffesionalNotFound #NoAppointments 
+            warn exception.message
+          end
+          
+          #warn "TODO: Implementar borrado de todos los turnos de la o el profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
       end
 
@@ -75,8 +95,17 @@ module Polycon
           '"Alma Estevez" --date="2021-09-16" # Lists appointments for Alma Estevez on the specified date'
         ]
 
-        def call(professional:)
-          warn "TODO: Implementar listado de turnos de la o el profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+        def call(professional:, date: nil)
+          begin
+            appointments = Model::Appointment.list(professional, date)
+            warn appointments.map {|each| each.to_s}
+          rescue Date::Error 
+            warn "La fecha ingresada es inválida"
+          rescue StandardError => exception #ProfessionalNotFound #Date::Error
+            warn exception.message
+          end
+          
+          #warn "TODO: Implementar listado de turnos de la o el profesional '#{professional}'.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
       end
 
@@ -113,7 +142,9 @@ module Polycon
         ]
 
         def call(date:, professional:, **options)
-          warn "TODO: Implementar modificación de un turno de la o el profesional '#{professional}' con fecha '#{date}', para cambiarle la siguiente información: #{options}.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
+          Model::Appointment.edit(professional,date,options)
+          warn "Turno editado con éxito"
+          #warn "TODO: Implementar modificación de un turno de la o el profesional '#{professional}' con fecha '#{date}', para cambiarle la siguiente información: #{options}.\nPodés comenzar a hacerlo en #{__FILE__}:#{__LINE__}."
         end
       end
     end

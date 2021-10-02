@@ -2,8 +2,8 @@ require 'fileutils'
 module Polycon
     module Model
         class Professional
-            attr_accessor :name, :appointments
-
+            attr_accessor :name
+            attr_reader :appointments
             def initialize(name, appointments=[])
                 @name = name
                 @appointments = appointments
@@ -20,23 +20,24 @@ module Polycon
                 name.split.map(&:capitalize).join(' ')
             end
 
-            def route
-                "#{PATH}#{@name.tr(" ","_")}"
+            def self.route(name)
+                "#{PATH}#{self.format_name(name).tr(" ","_")}"
             end
 
             def self.list
-                prof_array = Dir.entries(PATH)
-                prof_array.delete(".")
-                prof_array.delete("..")
+                entries = Dir.entries(PATH)
+                prof_array = entries.select {|each| each != "." && each != ".."}
                 raise StandarError, "No hay profesionales cargados" if prof_array.empty?
-                prof_array.map  {|each| self.from_file(each)}
+                prof_array.map  {|each| self.from_file(each.tr("_"," "))}
             end
 
             def self.from_file(name)
-                #returns the Professional object that has the name given(with his appointments -to be done)
+                #returns the Professional object that has the name given(with his appointments)
+                name = self.format_name(name)
                 raise StandardError, "El profesional específicado no existe" if !self.exist?(name)
                 #traigo un arreglo de sus appointments
-                professional = self.new(name.tr("_"," "))
+                appointments = Appointment.list(name)
+                professional = self.new(name.tr("_"," "),appointments)
             end
 
             def self.exist?(name)
@@ -54,6 +55,28 @@ module Polycon
                 prof.name=(new_name)
                 FileUtils.mv("#{PATH}#{old_name.tr(" ","_")}","#{PATH}#{new_name.tr(" ","_")}")
                 prof
+            end
+
+            def self.delete(name)
+                profesional = self.from_file(name)
+                raise StandardError, "El profesional no puede ser eliminado ya que tiene turnos futuros" if profesional.has_future_appointments?
+                FileUtils.rm_rf("#{PATH}#{profesional.name.tr(" ","_")}")
+            end
+
+            def has_future_appointments?
+                @appointments.any? {|each| each.is_future?}
+            end
+
+            def future_appointments
+                @appointments.select {|each| each.is_future?}
+            end
+
+            def is_available?(date)
+                #verifica que no tiene ningun turno entre +-10mis de la date pasada
+            end
+
+            def add_appointment(app)
+                @appointments << app
             end
         end
     end
