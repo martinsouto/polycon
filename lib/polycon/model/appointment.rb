@@ -18,7 +18,7 @@ module Polycon
 
             def self.create(date, prof, name, surname, phone, notes=nil)
                 profesional = Professional.from_file(prof)
-                date_obj = DateTime.strptime(date, "%Y-%m-%d %H:%M")
+                date_obj = DateTime.strptime("#{date}-03:00", "%Y-%m-%d %H:%M%z")
                 appointment = self.new(date_obj, name, surname, phone, notes)
                 raise Exceptions::PastAppointment, "No se puede crear el turno ya que la fecha es pasada" if !appointment.is_future?
                 raise Exceptions::CreationError, "El profesional no puede agregar el turno ya que está ocupado en esa fecha y hora" if !profesional.is_available?(date_obj)
@@ -31,9 +31,9 @@ module Polycon
                 raise Exceptions::ProfessionalNotFound, "El profesional especificado no existe" if !Professional.exist?(prof)
                 begin
                     #date_obj = DateTime.strptime(self.format_date(date), "%Y-%m-%d %H:%M")
-                    date_obj = DateTime.strptime(date, "%Y-%m-%d_%H-%M")
+                    date_obj = DateTime.strptime("#{date}-03:00", "%Y-%m-%d_%H-%M%z")
                 rescue
-                    date_obj = DateTime.strptime(date, "%Y-%m-%d %H:%M")
+                    date_obj = DateTime.strptime("#{date}-03:00", "%Y-%m-%d %H:%M%z")
                 end
                 raise Exceptions::AppointmentNotFound , "El turno especificado para este profesional no existe" if !self.exist?(prof,date)
                 ruta = self.route(prof,date)
@@ -84,7 +84,8 @@ module Polycon
             def self.reschedule(old_date,new_date,prof)
                 professional = Professional.from_file(prof)
                 appointment = self.from_file(prof,old_date)
-                new_date_obj = DateTime.strptime(new_date, "%Y-%m-%d %H:%M")
+                new_date_obj = DateTime.strptime("#{new_date}-03:00", "%Y-%m-%d %H:%M%z")
+                raise Exceptions::PastAppointment, "No se puede reprogramar un turno pasado" if !appointment.is_future?
                 raise Exceptions::PastAppointment, "No se puede reprogramar el turno para una fecha anterior a la actual" if new_date_obj<DateTime.now
                 raise Exceptions::ReschedulingError, "No se puede reprogramar el turno ya que es profesional no está disponible en la fecha indicada" if !professional.is_available?(new_date_obj)
                 FileUtils.mv(self.route(prof,old_date),self.route(prof,new_date))
