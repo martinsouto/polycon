@@ -170,6 +170,46 @@ module Polycon
         end
 
       end
+
+      class GridDay < Dry::CLI::Command
+        desc 'Generate grid file of appointments for a given day'
+
+        argument :date, required: true, desc: 'Date that will be used to generate the grid'
+        option :professional, required: false, desc: 'Professional to filter the appointments'
+
+        example [
+          '"2021-09-16" # Creates a grid that shows every professional`s appointments whose date is 2021-09-16',
+          '"2021-09-16" --professional="Alma Estevez" # Creates a grid that shows all Alma Estevez`s appointments whose date is 2021-09-16'
+        ]
+
+        def call(date:, professional: nil)
+          res = Model::Appointment.grid_day(date,professional)
+          warn res
+          res.each do |key, value|
+            warn "#{key}:"
+            value.each { |each| warn "#{each.name} #{each.surname}"}
+            warn "----"
+          end
+        end
+
+      end
+
+      class GridWeek < Dry::CLI::Command
+        desc 'Generate grid file of appointments for a week'
+
+        argument :date, required: true, desc: 'Date of the week that will be used to generate the grid'
+        option :professional, required: false, desc: 'Professional to filter the appointments'
+
+        example [
+          '"2021-09-16" # Creates a grid that shows every professional`s appointments whose date is in the same week that 2021-09-16',
+          '"2021-09-16" --professional="Alma Estevez" # Creates a grid that shows all Alma Estevez`s appointments whose date is in the same week that 2021-09-16'
+        ]
+
+        def call(date:, professional: nil)
+          warn "TODO: implementar este otro comando"
+        end
+
+      end
     end
   end
 end
