@@ -3,9 +3,6 @@ require 'fileutils'
 module Polycon
     module Utils
         class Export
-            def self.algo
-                puts PATH2
-            end
 
             def self.create_grid_day(date,dic,prof=nil)
                 template = %{<!DOCTYPE html>
@@ -15,19 +12,20 @@ module Polycon
                     <title>Document</title>
                 </head>
                 <body>
-                    <p>Holaaaa <%= date %><p>
+                    <p>Probando<p>
                     <%= dic %>
                 </body>
                 </html>
                 }
 
                 erb = ERB.new(template)
-                output = erb.result()
+                output = erb.result_with_hash(dic: dic)
 
                 if prof
-                    file_name = "#{prof}_#{date.strftime("%d-%m-%Y_%H-%M")}.html"
+                    file_name = "#{prof.tr(' ','-')}_#{date}.html"
                 else
-                    file_name = "#{date.strftime("%d-%m-%Y_%H-%M")}.html"
+                    file_name = "#{date}.html"
+                end
 
                 FileUtils.mkdir_p "#{PATH2}day"
                 File.open("#{PATH2}day/#{file_name}",'w') do |f|

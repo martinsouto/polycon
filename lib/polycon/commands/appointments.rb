@@ -183,12 +183,11 @@ module Polycon
         ]
 
         def call(date:, professional: nil)
-          res = Model::Appointment.grid_day(date,professional)
-          warn res
-          res.each do |key, value|
-            warn "#{key}:"
-            value.each { |each| warn "#{each.name} #{each.surname}"}
-            warn "----"
+          begin
+            Model::Appointment.grid_day(date,professional)
+            warn "Grilla creada con exito"
+          rescue => exception
+            warn exception.message
           end
         end
 
