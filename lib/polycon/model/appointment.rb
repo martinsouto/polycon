@@ -104,7 +104,7 @@ module Polycon
                 end
             end
 
-            def self.grid_day(date, prof=nil)
+            def self.grid_day2(date, prof=nil)#obsolete
                 if !prof
                     profs = Professional.list
                     hash = profs.reduce({}) {|dic, pro| dic.update( pro.name => pro.appointments_from_day(date) )}
@@ -115,6 +115,21 @@ module Polycon
                 Utils::Export.create_grid_day(date, hash, prof) 
             end
 
+
+            def self.grid_day(date, prof=nil)
+                array = []
+                if !prof
+                    profs = Professional.list
+                    profs.each do |pro|
+                        pro.appointments_from_day(date).each { |app| array << [pro.name, app]}
+                    end
+                else
+                    profe = Professional.from_file(prof)
+                    profe.appointments_from_day(date).each { |app| array << [profe.name, app]}
+                end
+                Utils::Export.create_grid_day(date, array, prof) 
+            end    
+            
             def is_on_day?(date)
                 @date.to_date == Date.strptime(date, "%Y-%m-%d")
             end
