@@ -186,6 +186,10 @@ module Polycon
           begin
             Model::Appointment.grid_day(date,professional)
             warn "Grilla creada con exito"
+          rescue Date::Error 
+            warn "La fecha indicada es inválida"
+          rescue Model::Exceptions::ProfessionalNotFound, Model::Exceptions::NoProfessionals => exception
+            warn exception.message
           rescue => exception
             warn exception.message
           end
@@ -205,7 +209,16 @@ module Polycon
         ]
 
         def call(date:, professional: nil)
-          Model::Appointment.grid_week(date,professional)
+          begin
+            Model::Appointment.grid_week(date,professional)
+            warn "Grilla creada con éxito"
+          rescue Date::Error 
+            warn "La fecha indicada es inválida"
+          rescue Model::Exceptions::ProfessionalNotFound, Model::Exceptions::NoProfessionals => exception
+            warn exception.message
+          rescue => exception
+            warn exception.message
+          end
         end
 
       end

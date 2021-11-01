@@ -23,7 +23,7 @@ module Polycon
                             <td>
                                 <ul>
                                 <% value.each do |elem| %>
-                                    <li>(<%= elem[0] %>) <%= elem[1].name %> <%= elem[1].surname %> <%= elem[1].phone %> </li>  
+                                    <li>(<%= elem[0] %>) <%= elem[1].name %> <%= elem[1].surname %> - <%= elem[1].phone %> - <%= elem[1].date.strftime("%H:%M") %></li>  
                                 <% end %>
                                 </ul>
                             </td>
@@ -89,7 +89,7 @@ module Polycon
                             <td>
                                 <ul>
                                 <% apps.each do |elem| %>
-                                    <li>(<%= elem[0] %>) <%= elem[1].name %> <%= elem[1].surname %> <%= elem[1].phone %> </li>  
+                                    <li>(<%= elem[0] %>) <%= elem[1].name %> <%= elem[1].surname %> - <%= elem[1].phone %> - <%= elem[1].date.strftime("%H:%M") %></li>  
                                 <% end %>
                                 </ul>
                             </td>
