@@ -134,6 +134,34 @@ module Polycon
                 @date.to_date == Date.strptime(date, "%Y-%m-%d")
             end
 
+            def is_on_week?(date)
+                monday = Appointment.last_monday(date)
+                saturday = monday + 6
+                ((@date.to_date >= monday) and (@date.to_date <= saturday))
+            end
+
+            def self.last_monday(date)
+                date_obj = Date.strptime(date, "%Y-%m-%d")
+                return date_obj if date_obj.wday == 1
+                date_obj.to_date - ((date_obj.wday + 5) % 7 +1)
+            end
+
+            def self.grid_week(date, prof=nil)
+                array = []
+                if !prof
+                    profs = Professional.list
+                    profs.each do |pro|
+                        pro.appointments_from_week(date).each { |app| array << [pro.name, app]}
+                    end
+                else
+                    profe = Professional.from_file(prof)
+                    profe.appointments_from_week(date).each { |app| array << [profe.name, app]}
+                end
+                
+                Utils::Export.create_grid_week(self.last_monday(date).strftime("%Y-%m-%d"), array, prof)
+                array
+            end
+
         end
     end
 end

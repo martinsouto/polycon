@@ -205,7 +205,7 @@ module Polycon
         ]
 
         def call(date:, professional: nil)
-          warn "TODO: implementar este otro comando"
+          Model::Appointment.grid_week(date,professional)
         end
 
       end
