@@ -79,6 +79,14 @@ module Polycon
             def add_appointment(app)
                 @appointments << app
             end
+
+            def appointments_from_day(date)
+                @appointments.select {|ap| ap.is_on_day?(date)}.sort_by { |elem| elem.date}
+            end
+
+            def appointments_from_week(date)
+                @appointments.select {|ap| ap.is_on_week?(date)}.sort_by { |elem| elem.date}
+            end
         end
     end
 end
