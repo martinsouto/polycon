@@ -4,6 +4,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
   skip_before_action :require_no_authentication, only: [:new, :create]
+  before_action :authenticate_user!
 
   # GET /resource/sign_up
   # def new
@@ -12,6 +13,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # POST /resource
     def create
+      has_permission('user_new')
       if user_signed_in?
         @user = User.new(email: user_params[:email], password: user_params[:password], password_confirmation: user_params[:password_confirmation])
         role = Role.find_by(name: user_params[:role])

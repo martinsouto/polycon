@@ -23,9 +23,11 @@
           <a class="nav-link" href="/">Exportar</a>
         </li>
 
+        <% if has_permission('user_index')%>
         <li class="nav-item">
             <a class="nav-link" href="/users">Usuarios</a>
         </li>
+        <% end %>
         <li class="nav-item">
           <%= link_to "Editar perfil", edit_user_registration_path, class:"nav-link"%>
         </li>

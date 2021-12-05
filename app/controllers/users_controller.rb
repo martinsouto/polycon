@@ -4,24 +4,29 @@ class UsersController < ApplicationController
 
   # GET /users or /users.json
   def index
+    has_permission('user_index')
     @users = User.all
   end
 
   # GET /users/1 or /users/1.json
   def show
+    has_permission('user_show')
   end
 
   # GET /users/new
   def new
+    has_permission('user_new')
     @user = User.new
   end
 
   # GET /users/1/edit
   def edit
+    has_permission('user_update')
   end
 
   # POST /users or /users.json
   def create
+    has_permission('user_new')
     @user = User.new(user_params)
 
     respond_to do |format|
@@ -37,8 +42,9 @@ class UsersController < ApplicationController
 
   # PATCH/PUT /users/1 or /users/1.json
   def update
+    has_permission('user_update')
     role = Role.find_by(name: user_params[:role])
-    @user.roles << role 
+    @user.roles = [role] 
     respond_to do |format|
       if @user.update(email: user_params[:email], password: user_params[:password], password_confirmation: user_params[:password_confirmation])
         format.html { redirect_to @user, notice: "User was successfully updated." }
@@ -52,6 +58,7 @@ class UsersController < ApplicationController
 
   # DELETE /users/1 or /users/1.json
   def destroy
+    has_permission('user_destroy')
     @user.destroy
     respond_to do |format|
       format.html { redirect_to users_url, notice: "User was successfully destroyed." }

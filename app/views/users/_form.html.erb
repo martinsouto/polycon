@@ -37,7 +37,7 @@
     <%= form.radio_button :role, "asistencia" %>
     <%= form.label :role_consulta, "Asistencia" %>
   <% else %>
-    <%= form.radio_button :role, "administracion", checked: user.roles.first.name == "administrador" %>
+    <%= form.radio_button :role, "administracion", checked: user.roles.first.name == "administracion" %>
     <%= form.label :role_administrador, "Administracion" %><br>
     <%= form.radio_button :role, "consulta", checked: user.roles.first.name == "consulta" %>
     <%= form.label :role_consulta, "Consulta" %><br>
