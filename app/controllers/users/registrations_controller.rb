@@ -13,8 +13,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # POST /resource
     def create
       if user_signed_in?
-        @user = User.new(user_params)
-
+        @user = User.new(email: user_params[:email], password: user_params[:password], password_confirmation: user_params[:password_confirmation])
+        role = Role.find_by(name: user_params[:role])
+        @user.roles << role
         respond_to do |format|
           if @user.save
             format.html { redirect_to @user, notice: "User was successfully created." }
@@ -31,7 +32,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
     private
       def user_params
-        params.require(:user).permit(:email, :password, :password_confirmation)
+        params.require(:user).permit(:email, :password, :password_confirmation, :role)
       end
 
   # GET /resource/edit

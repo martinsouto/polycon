@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   before_action :set_user, only: %i[ show edit update destroy ]
+  before_action :authenticate_user!
 
   # GET /users or /users.json
   def index
@@ -36,8 +37,10 @@ class UsersController < ApplicationController
 
   # PATCH/PUT /users/1 or /users/1.json
   def update
+    role = Role.find_by(name: user_params[:role])
+    @user.roles << role 
     respond_to do |format|
-      if @user.update(user_params)
+      if @user.update(email: user_params[:email], password: user_params[:password], password_confirmation: user_params[:password_confirmation])
         format.html { redirect_to @user, notice: "User was successfully updated." }
         format.json { render :show, status: :ok, location: @user }
       else
@@ -64,6 +67,6 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:email, :password, :password_confirmation)
+      params.require(:user).permit(:email, :password, :password_confirmation, :role)
     end
 end
