@@ -1,22 +1,21 @@
 <%= form_with(model: professional) do |form| %>
   <% if professional.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(professional.errors.count, "error") %> prohibited this professional from being saved:</h2>
-
-      <ul>
-        <% professional.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+      <% professional.errors.each do |error| %>
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <%= error.full_message %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+      <% end %>
     </div>
   <% end %>
 
   <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name %>
+    <p><%= form.label :name, "Nombre:" %><br>
+    <%= form.text_field :name %></p>
   </div>
 
   <div class="actions">
-    <%= form.submit %>
+    <p><%= form.submit "Guardar"%></p>
   </div>
 <% end %>

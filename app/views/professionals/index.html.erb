@@ -14,15 +14,15 @@
       <tr>
         <td><%= professional.name %></td>
         <% if has_permission('professional_show')%>
-        <td><%= link_to 'Show', professional %></td>
+        <td><%= link_to 'Ver', professional %></td>
         <% end %>
 
         <% if has_permission('professional_update')%>
-        <td><%= link_to 'Edit', edit_professional_path(professional) %></td>
+        <td><%= link_to 'Editar', edit_professional_path(professional) %></td>
         <% end %>
 
         <% if has_permission('professional_destroy')%>
-        <td><%= link_to 'Destroy', professional, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Eliminar', professional, method: :delete, data: { confirm: 'Estas seguro?' } %></td>
         <% end %>
       </tr>
     <% end %>
@@ -32,5 +32,5 @@
 <br>
 
 <% if has_permission('professional_new')%>
-<%= link_to 'New Professional', new_professional_path %>
+<%= link_to 'Crear nuevo Profesional', new_professional_path %>
 <% end %>
