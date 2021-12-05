@@ -1,0 +1,11 @@
+
+<p>
+  <strong>Nombre:</strong>
+  <%= @professional.name %>
+</p>
+
+<% if has_permission('professional_update')%>
+<%= link_to 'Edit', edit_professional_path(@professional) %>
+ | 
+ <% end %>
+<%= link_to 'Back', professionals_path %>

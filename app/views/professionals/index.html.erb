@@ -1,0 +1,36 @@
+
+<h1>Profesionales</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @professionals.each do |professional| %>
+      <tr>
+        <td><%= professional.name %></td>
+        <% if has_permission('professional_show')%>
+        <td><%= link_to 'Show', professional %></td>
+        <% end %>
+
+        <% if has_permission('professional_update')%>
+        <td><%= link_to 'Edit', edit_professional_path(professional) %></td>
+        <% end %>
+
+        <% if has_permission('professional_destroy')%>
+        <td><%= link_to 'Destroy', professional, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<% if has_permission('professional_new')%>
+<%= link_to 'New Professional', new_professional_path %>
+<% end %>
