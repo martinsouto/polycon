@@ -56,15 +56,15 @@ class ProfessionalsController < ApplicationController
 
   # DELETE /professionals/1 or /professionals/1.json
   def destroy
-    has_permission('professional_destroy')
-    
-    respond_to do |format|
-      if @professional.destroy
-        format.html { redirect_to professionals_url, notice: "Profesional eliminado con éxito." }
-        format.json { head :no_content }
-      else
-        format.html { redirect_to professionals_url, alert: "El profesional seleccionado tiene turnos a futuro, por lo que no puede eliminarse" }
-        format.json { head :no_content }
+    if has_permission('professional_destroy')
+      respond_to do |format|
+        if @professional.destroy
+          format.html { redirect_to professionals_url, notice: "Profesional eliminado con éxito." }
+          format.json { head :no_content }
+        else
+          format.html { redirect_to professionals_url, alert: "El profesional seleccionado tiene turnos a futuro, por lo que no puede eliminarse" }
+          format.json { head :no_content }
+        end
       end
     end
   end

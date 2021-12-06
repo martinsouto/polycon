@@ -1,15 +1,13 @@
-<p id="notice"><%= notice %></p>
 
-<h1>Appointments</h1>
+<h1>Turnos de <%= @professional.name %></h1>
 
 <table>
   <thead>
     <tr>
-      <th>Date</th>
-      <th>First name</th>
-      <th>Last name</th>
-      <th>Phone</th>
-      <th>Notes</th>
+      <th>Fecha y hora</th>
+      <th>Nombre</th>
+      <th>Apellido</th>
+      <th>Teléfono</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -17,19 +15,30 @@
   <tbody>
     <% @appointments.each do |appointment| %>
       <tr>
-        <td><%= appointment.date %></td>
+        <td><%= appointment.date.strftime("%Y/%m/%d %H:%M") %></td>
         <td><%= appointment.first_name %></td>
         <td><%= appointment.last_name %></td>
         <td><%= appointment.phone %></td>
-        <td><%= appointment.notes %></td>
-        <td><%= link_to 'Show', [@professional, appointment] %></td>
-        <td><%= link_to 'Edit', edit_professional_appointment_path(@professional, appointment) %></td>
-        <td><%= link_to 'Destroy', [@professional, appointment], method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <% if has_permission('appointment_show')%>
+        <td><%= link_to 'Ver', [@professional, appointment] %></td>
+        <% end %>
+
+        <% if has_permission('appointment_update')%>
+        <td> | <%= link_to 'Editar', edit_professional_appointment_path(@professional, appointment) %></td>
+        <% end %>
+
+        <% if has_permission('appointment_destroy')%>
+        <td> | <%= link_to 'Cancelar', [@professional, appointment], method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <% end %>
+
       </tr>
     <% end %>
   </tbody>
 </table>
 
 <br>
-
-<%= link_to 'New Appointment', new_professional_appointment_path(@professional) %>
+<p>
+<% if has_permission('appointment_new')%>
+<%= link_to 'Crear nuevo turno', new_professional_appointment_path(@professional) %>
+<% end %>
+</p>

@@ -1,5 +1,7 @@
-<h1>New Appointment</h1>
+<h1>Nuevo turno</h1>
 
 <%= render 'form', appointment: @appointment, professional: @professional %>
 
-<%= link_to 'Back', professional_appointments_path(@professional) %>
+<p>
+<%= link_to 'Volver', professional_appointments_path(@professional) %>
+</p>
