@@ -33,7 +33,7 @@
         <td> | <%= link_to 'Editar', edit_professional_appointment_path(@professional, appointment) %></td>
         <% end %>
 
-        <% if has_permission('appointment_destroy')%>
+        <% if has_permission('appointment_destroy') && appointment.date.future?%>
         <td> | <%= link_to 'Cancelar', [@professional, appointment], method: :delete, data: { confirm: 'Estas seguro?' } %></td>
         <% end %>
 
