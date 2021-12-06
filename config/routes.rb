@@ -1,6 +1,11 @@
 Rails.application.routes.draw do
   
   
+  get 'export/index'
+  get 'export/day'
+  get 'export/week'
+  post 'export/export_day'
+  post 'export/export_week'
   resources :professionals do
     resources :appointments do
       collection do

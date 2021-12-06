@@ -16,4 +16,6 @@ class Appointment < ApplicationRecord
   end
 
   scope :futures, -> { where("date > ?", DateTime.now) }
+  scope :in_day, -> (start_date) { where date: start_date.all_day}
+  scope :in_week, -> (start_date) { where date: start_date.all_week}
 end
