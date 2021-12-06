@@ -2,7 +2,11 @@ Rails.application.routes.draw do
   
   
   resources :professionals do
-    resources :appointments
+    resources :appointments do
+      collection do
+        delete 'destroy_all', action: "destroy_all", as: 'destroy_all'
+      end
+    end
   end
   root to: 'home#show'
   get 'home/show'

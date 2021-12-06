@@ -75,6 +75,14 @@ class AppointmentsController < ApplicationController
     end
   end
 
+  def destroy_all
+    if has_permission('appointment_destroy')
+      @professional.appointments.futures.destroy_all
+      flash[:notice] = "Todos los turnos futuros de #{@professional.name} fueron cancelados"
+      redirect_to professional_appointments_url(@professional)
+    end
+  end
+
   private
 
     def set_professional

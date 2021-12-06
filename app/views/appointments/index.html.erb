@@ -1,6 +1,12 @@
 
 <h1>Turnos de <%= @professional.name %></h1>
 
+<p>
+<% if has_permission('appointment_destroy')%>
+  <%= link_to 'Cancelar todos los turnos', destroy_all_professional_appointments_path(@professional), method: :delete, data: { confirm: 'Estas seguro?' } %>
+<% end %>
+</p>
+
 <table>
   <thead>
     <tr>
@@ -28,7 +34,7 @@
         <% end %>
 
         <% if has_permission('appointment_destroy')%>
-        <td> | <%= link_to 'Cancelar', [@professional, appointment], method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td> | <%= link_to 'Cancelar', [@professional, appointment], method: :delete, data: { confirm: 'Estas seguro?' } %></td>
         <% end %>
 
       </tr>
