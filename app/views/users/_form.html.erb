@@ -1,0 +1,54 @@
+<%= form_with(model: user) do |form| %>
+  <% if user.errors.any? %>
+    <div id="error_explanation">
+        <% user.errors.each do |error| %>
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <%= error.full_message %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        <% end %>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <p><%= form.label :email %>:<br>
+    <%= form.text_field :email %></p>
+  </div>
+
+  <div class="field">
+    <p><%= form.label :password, "Contraseña:" %> <br>
+    <%= form.text_field :password %></p>
+  </div>
+
+  <div class="field">
+    <p><%= form.label :password_confirmation, "Confirmar contraseña:" %> <br>
+    <%= form.text_field :password_confirmation %></p>
+  </div>
+
+  
+  <div class="field">
+  <p>
+  Rol:<br>
+  <% if user.roles.empty? %>
+    <%= form.radio_button :role, "administracion" %>
+    <%= form.label :role_administrador, "Administracion" %><br>
+    <%= form.radio_button :role, "consulta", checked: true %>
+    <%= form.label :role_consulta, "Consulta" %><br>
+    <%= form.radio_button :role, "asistencia" %>
+    <%= form.label :role_consulta, "Asistencia" %>
+  <% else %>
+    <%= form.radio_button :role, "administracion", checked: user.roles.first.name == "administracion" %>
+    <%= form.label :role_administrador, "Administracion" %><br>
+    <%= form.radio_button :role, "consulta", checked: user.roles.first.name == "consulta" %>
+    <%= form.label :role_consulta, "Consulta" %><br>
+    <%= form.radio_button :role, "asistencia", checked: user.roles.first.name == "asistencia" %>
+    <%= form.label :role_consulta, "Asistencia" %>
+  <% end %>
+  </p>
+  </div>
+  
+
+  <div class="actions">
+    <p><%= form.submit "Guardar" %></p>
+  </div>
+<% end %>
