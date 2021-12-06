@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
   
-  resources :professionals
+  
+  resources :professionals do
+    resources :appointments
+  end
   root to: 'home#show'
   get 'home/show'
   

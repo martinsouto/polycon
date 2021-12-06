@@ -17,6 +17,8 @@
         <td><%= link_to 'Ver', professional %></td>
         <% end %>
 
+        <td><%= link_to 'Turnos', professional_appointments_path(professional) %></td>
+
         <% if has_permission('professional_update')%>
         <td><%= link_to 'Editar', edit_professional_path(professional) %></td>
         <% end %>
