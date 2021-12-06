@@ -7,6 +7,7 @@ class Appointment < ApplicationRecord
   #validates :professional, presence: { message: "Debe indicarse a que profesional corresponde el turno"}
   validates :date, presence: { message: "Debe ingresarse una fecha y hora para el turno" }
   validate :futute_date
+  validates :date, uniqueness: { scope: :professional, message: "El profesional no está disponible en la fecha y hora indicada"}
 
 
   def futute_date
