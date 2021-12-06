@@ -1,0 +1,21 @@
+<%= form_with(model: professional) do |form| %>
+  <% if professional.errors.any? %>
+    <div id="error_explanation">
+      <% professional.errors.each do |error| %>
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <%= error.full_message %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <p><%= form.label :name, "Nombre:" %><br>
+    <%= form.text_field :name %></p>
+  </div>
+
+  <div class="actions">
+    <p><%= form.submit "Guardar"%></p>
+  </div>
+<% end %>

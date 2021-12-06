@@ -1,0 +1,17 @@
+<%= form_with url: url_res do |form|%>
+
+    <div class="field">
+        <p><%= form.label :date, "Fecha:" %><br>
+        <%= form.date_field :date, :required => true %></p>
+    </div>
+
+    <div class="field">
+        <p><%= form.label :name, "Filtar por profesional:" %><br>
+        <%= form.select :name, professionals_names %></p>
+    </div>
+
+    <div class="actions">
+    <p><%= form.submit "Avanzar"%></p>
+    </div>
+
+<% end %>

@@ -1,0 +1,41 @@
+<%= form_with(model: [professional, appointment]) do |form| %>
+  <% if appointment.errors.any? %>
+    <div id="error_explanation">
+      <% appointment.errors.each do |error| %>
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <%= error.full_message %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <p><%= form.label :date, "Fecha y hora:" %><br>
+    <%= form.datetime_select :date %></p>
+  </div>
+
+  <div class="field">
+    <p><%= form.label :first_name, "Nombre/s:" %><br>
+    <%= form.text_field :first_name %></p>
+  </div>
+
+  <div class="field">
+    <p><%= form.label :last_name, "Apellido/s:" %><br>
+    <%= form.text_field :last_name %></p>
+  </div>
+
+  <div class="field">
+    <p><%= form.label :phone, "Teléfono:" %><br>
+    <%= form.text_field :phone %></p>
+  </div>
+
+  <div class="field">
+    <p><%= form.label :notes, "Notas adicionales:" %><br>
+    <%= form.text_area :notes %></p>
+  </div>
+
+  <div class="actions">
+    <p><%= form.submit "Guardar" %></p>
+  </div>
+<% end %>
