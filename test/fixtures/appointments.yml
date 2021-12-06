@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  date: 2021-12-05 19:29:09
+  professional: one
+  first_name: MyString
+  last_name: MyString
+  phone: MyString
+  notes: MyText
+
+two:
+  date: 2021-12-05 19:29:09
+  professional: two
+  first_name: MyString
+  last_name: MyString
+  phone: MyString
+  notes: MyText
