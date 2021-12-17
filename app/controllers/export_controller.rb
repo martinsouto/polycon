@@ -18,11 +18,11 @@ class ExportController < ApplicationController
     date = Date.strptime(params[:date], "%Y-%m-%d")
     if params[:name] == "-"
       aps = Appointment.in_day(date)
-      file_name = "#{date}.html"
+      file_name = "#{date}_day.html"
     else
       prof = Professional.find_by(name: params[:name])
       aps = prof.appointments.in_day(date)
-      file_name = "#{params[:name].tr(' ','-')}_#{date}.html"
+      file_name = "#{params[:name].tr(' ','-')}_#{date}_day.html"
     end
     array = aps.to_a
     
@@ -38,15 +38,7 @@ class ExportController < ApplicationController
 
     erb = ERB.new(@template)
     output = erb.result_with_hash(rows: @rows)
-
-    path = "#{File.expand_path('~')}/.polycon-grids/day"
-    FileUtils.mkdir_p path
-    File.open("#{path}/#{file_name}",'w') do |f|
-      f.write output
-    end
-
-    flash[:notice] = "Archivo generado en la ruta #{path}/#{file_name}"
-    redirect_to export_index_path
+    send_data(output, :filename => file_name)
   end
 
 #-------------------------------------------------------------------------
@@ -55,11 +47,11 @@ class ExportController < ApplicationController
     date = (Date.strptime(params[:date], "%Y-%m-%d")).beginning_of_week
     if params[:name] == "-"
       aps = Appointment.in_week(date)
-      file_name = "#{date}.html"
+      file_name = "#{date}_week.html"
     else
       prof = Professional.find_by(name: params[:name])
       aps = prof.appointments.in_week(date)
-      file_name = "#{params[:name].tr(' ','-')}_#{date}.html"
+      file_name = "#{params[:name].tr(' ','-')}_#{date}_week.html"
     end
     array = aps.to_a
     
@@ -77,15 +69,7 @@ class ExportController < ApplicationController
 
     erb = ERB.new(@template)
     output = erb.result_with_hash(rows: @rows)
-
-    path = "#{File.expand_path('~')}/.polycon-grids/week"
-    FileUtils.mkdir_p path
-    File.open("#{path}/#{file_name}",'w') do |f|
-      f.write output
-    end
-
-    flash[:notice] = "Archivo generado en la ruta #{path}/#{file_name}"
-    redirect_to export_index_path
+    send_data(output, :filename => file_name)
   end
 
   private
