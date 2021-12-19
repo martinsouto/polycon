@@ -44,24 +44,24 @@ class ExportController < ApplicationController
 #-------------------------------------------------------------------------
 
   def export_week
-    date = (Date.strptime(params[:date], "%Y-%m-%d")).beginning_of_week
+    date = (DateTime.strptime("#{params[:date]}", "%Y-%m-%d")).beginning_of_week
     if params[:name] == "-"
-      aps = Appointment.in_week(date)
-      file_name = "#{date}_week.html"
+      #aps = Appointment.in_week(date)
+      aps = Appointment.where(date: date.beginning_of_week.change(:offset => "-0300")..date.end_of_week.change(:offset => "-0300"))
+      file_name = "#{date.strftime("%Y-%m-%d")}_week.html"
     else
       prof = Professional.find_by(name: params[:name])
-      aps = prof.appointments.in_week(date)
-      file_name = "#{params[:name].tr(' ','-')}_#{date}_week.html"
+      aps = prof.appointments.where(date: date.beginning_of_week.change(:offset => "-0300")..date.end_of_week.change(:offset => "-0300"))
+      file_name = "#{params[:name].tr(' ','-')}_#{date.strftime("%Y-%m-%d")}_week.html"
     end
     array = aps.to_a
-    
     @rows.each {|key,value| @rows[key] = [[],[],[],[],[],[],[]]}
 
     @rows.each do |key,value|
       datetime_bottom_limit = DateTime.strptime("#{params[:date].to_s}_#{key}-03:00", "%Y-%m-%d_%H:%M%z")
-      datetime_top_limit = datetime_bottom_limit + Rational(30,(60*24))
+      datetime_top_limit = datetime_bottom_limit + 29.minutes
       array.delete_if do |element|
-          if (element.date.strftime("%H:%M") >= datetime_bottom_limit.strftime("%H:%M")) and (element.date.strftime("%H:%M") < datetime_top_limit.strftime("%H:%M"))
+          if (element.date.strftime("%H:%M") >= datetime_bottom_limit.strftime("%H:%M")) and (element.date.strftime("%H:%M") <= datetime_top_limit.strftime("%H:%M"))
               @rows[key][(element.date.wday - 1)] << element
           end
       end
